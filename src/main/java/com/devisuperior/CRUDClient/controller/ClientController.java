@@ -16,7 +16,6 @@ import java.net.URI;
 public class ClientController {
 
 
-
     @Autowired
     private ClientService service;
 
@@ -30,13 +29,13 @@ public class ClientController {
     @GetMapping
     public ResponseEntity<Page<ClientDTO>> findAll(Pageable pageable) {
         Page<ClientDTO> dto = service.findAll(pageable);
-        return  ResponseEntity.ok(dto);
+        return ResponseEntity.ok(dto);
     }
 
     @PostMapping
     public ResponseEntity<ClientDTO> insert(@RequestBody ClientDTO dto) {
         dto = service.insert(dto);
-        URI uri =  ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}")
+        URI uri = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}")
                 .buildAndExpand(dto.getId()).toUri();
         return ResponseEntity.created(uri).body(dto);
 
@@ -47,6 +46,12 @@ public class ClientController {
         dto = service.update(id, dto);
         return ResponseEntity.ok(dto);
 
+    }
+
+    @DeleteMapping(value = "/{id}")
+    public ResponseEntity<Void> delete(@PathVariable Long id) {
+        service.delete(id);
+        return ResponseEntity.noContent().build();
     }
 
 }

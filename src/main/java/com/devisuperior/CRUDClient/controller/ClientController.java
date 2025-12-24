@@ -1,18 +1,21 @@
 package com.devisuperior.CRUDClient.controller;
 
 import com.devisuperior.CRUDClient.dto.ClientDTO;
-import com.devisuperior.CRUDClient.repositories.ClientRepository;
 import com.devisuperior.CRUDClient.services.ClientService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping(value = "/clients")
 public class ClientController {
 
-    @Autowired
-    private ClientRepository repository;
+
 
     @Autowired
     private ClientService service;
@@ -23,5 +26,12 @@ public class ClientController {
         return ResponseEntity.ok().body(dto);
 
     }
+
+    @GetMapping
+    public Page<ClientDTO> findAll(Pageable pageable) {
+        return  service.findAll(pageable);
+
+    }
+
 
 }

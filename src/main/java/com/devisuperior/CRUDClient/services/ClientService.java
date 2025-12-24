@@ -6,8 +6,6 @@ import com.devisuperior.CRUDClient.repositories.ClientRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -20,10 +18,10 @@ public class ClientService {
     private ClientRepository repository;
 
     @Transactional(readOnly = true)
-    public ResponseEntity<ClientDTO> findById(Long id) {
+    public ClientDTO findById(Long id) {
         Optional<Client> result = repository.findById(id);
         Client client = result.get();
-        return new ResponseEntity<>(new ClientDTO(client), HttpStatus.OK);
+        return new ClientDTO(client);
 
     }
 

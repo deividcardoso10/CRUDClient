@@ -32,6 +32,7 @@ public class ClientDTO {
         cpf = client.getCpf();
         income = client.getIncome();
         birthDate = client.getBirthDate();
+        children = client.getChildren();
     }
 
     public Long getId() {

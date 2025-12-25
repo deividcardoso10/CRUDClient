@@ -3,7 +3,12 @@ package com.devisuperior.CRUDClient.services;
 import com.devisuperior.CRUDClient.dto.ClientDTO;
 import com.devisuperior.CRUDClient.entities.Client;
 import com.devisuperior.CRUDClient.repositories.ClientRepository;
+import com.devisuperior.CRUDClient.services.exceptions.DatabaseException;
+import com.devisuperior.CRUDClient.services.exceptions.ResourceNotFoundException;
+import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -19,8 +24,7 @@ public class ClientService {
 
     @Transactional(readOnly = true)
     public ClientDTO findById(Long id) {
-        Optional<Client> result = repository.findById(id);
-        Client client = result.get();
+        Client client = repository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Client not found with id " + id));
         return new ClientDTO(client);
 
     }
@@ -42,11 +46,30 @@ public class ClientService {
 
     @Transactional
     public ClientDTO update(Long id, ClientDTO dto) {
-        Client client = repository.getReferenceById(id);
-        dtoToEntity(dto, client);
-        client = repository.save(client);
-        return new ClientDTO(client);
+        try{
+            Client client = repository.getReferenceById(id);
+            dtoToEntity(dto, client);
+            client = repository.save(client);
+            return new ClientDTO(client);
+        }
+        catch(EntityNotFoundException e){
+            throw new ResourceNotFoundException("Client not found with id " + id);
+        }
 
+
+    }
+
+    @Transactional
+    public void delete(Long id) {
+        if (!repository.existsById(id)){
+            throw new ResourceNotFoundException("Client not found with id " + id);
+        }
+        try {
+            repository.deleteById(id);
+        }
+        catch (DataIntegrityViolationException e){
+            throw new  DatabaseException("falha de integridade referencial");
+        }
     }
 
     private void dtoToEntity(ClientDTO dto, Client client) {
@@ -57,8 +80,5 @@ public class ClientService {
         client.setChildren(dto.getChildren());
     }
 
-    @Transactional
-    public void delete(Long id) {
-        repository.deleteById(id);
-    }
+
 }

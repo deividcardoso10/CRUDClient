@@ -23,7 +23,6 @@ public class ClientController {
     public ResponseEntity<ClientDTO> findById(@PathVariable Long id) {
         ClientDTO dto = service.findById(id);
         return ResponseEntity.ok().body(dto);
-
     }
 
     @GetMapping
@@ -53,5 +52,4 @@ public class ClientController {
         service.delete(id);
         return ResponseEntity.noContent().build();
     }
-
 }
